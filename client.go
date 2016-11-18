@@ -36,15 +36,7 @@ func (b *Barnard) start() {
 func (b *Barnard) OnConnect(e *gumble.ConnectEvent) {
 	b.Client = e.Client
 
-	b.Ui.SetActive(uiViewInput)
-	b.UiTree.Rebuild()
-	b.Ui.Refresh()
-
-	b.UpdateInputStatus(fmt.Sprintf("To: %s", e.Client.Self.Channel.Name))
-	b.AddOutputLine(fmt.Sprintf("Connected to %s", b.Client.Conn.RemoteAddr()))
-	if e.WelcomeMessage != nil {
-		b.AddOutputLine(fmt.Sprintf("Welcome message: %s", esc(*e.WelcomeMessage)))
-	}
+	// TODO UI INIT? e.WeclomeMessage ?
 }
 
 func (b *Barnard) OnDisconnect(e *gumble.DisconnectEvent) {
@@ -53,30 +45,25 @@ func (b *Barnard) OnDisconnect(e *gumble.DisconnectEvent) {
 	case gumble.DisconnectError:
 		reason = "connection error"
 	}
+	// TODO Disconnect UI
 	if reason == "" {
-		b.AddOutputLine("Disconnected")
+
 	} else {
-		b.AddOutputLine("Disconnected: " + reason)
 	}
-	b.UiTree.Rebuild()
-	b.Ui.Refresh()
 }
 
 func (b *Barnard) OnTextMessage(e *gumble.TextMessageEvent) {
-	b.AddOutputMessage(e.Sender, e.Message)
+	// TODO handle message
 }
 
 func (b *Barnard) OnUserChange(e *gumble.UserChangeEvent) {
 	if e.Type.Has(gumble.UserChangeChannel) && e.User == b.Client.Self {
-		b.UpdateInputStatus(fmt.Sprintf("To: %s", e.User.Channel.Name))
+		// channel change TODO
 	}
-	b.UiTree.Rebuild()
-	b.Ui.Refresh()
 }
 
 func (b *Barnard) OnChannelChange(e *gumble.ChannelChangeEvent) {
-	b.UiTree.Rebuild()
-	b.Ui.Refresh()
+	// CHANGE TODO
 }
 
 func (b *Barnard) OnPermissionDenied(e *gumble.PermissionDeniedEvent) {
@@ -103,7 +90,8 @@ func (b *Barnard) OnPermissionDenied(e *gumble.PermissionDeniedEvent) {
 	case gumble.PermissionDeniedNestingLimit:
 		info = "nesting limit"
 	}
-	b.AddOutputLine(fmt.Sprintf("Permission denied: %s", info))
+	// TODO UI
+	_ = info // TODO
 }
 
 func (b *Barnard) OnUserList(e *gumble.UserListEvent) {

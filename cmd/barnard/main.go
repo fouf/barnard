@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/jroimartin/gocui"
 	"github.com/layeh/barnard"
-	"github.com/layeh/barnard/uiterm"
+	_ "github.com/layeh/barnard/uiterm"
 	"github.com/layeh/gumble/gumble"
 	_ "github.com/layeh/gumble/opus"
 )
@@ -24,7 +25,7 @@ func main() {
 
 	// Initialize
 	b := barnard.Barnard{
-		Config: gumble.NewConfig(),
+		Config:  gumble.NewConfig(),
 		Address: *server,
 	}
 
@@ -43,6 +44,20 @@ func main() {
 		b.TLSConfig.Certificates = append(b.TLSConfig.Certificates, cert)
 	}
 
-	b.Ui = uiterm.New(&b)
-	b.Ui.Run()
+	//TODO Create UI
+
+	err := b.InitializeUI()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+	defer b.UI.Close()
+
+	b.UI.SetManager(&b.UILeftPane, &b.UIRightPane, &b.UIBottomPane, &b.UITextboxEntry)
+	b.SetupHotkeys()
+	if err := b.UI.MainLoop(); err != nil && err != gocui.ErrQuit {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
+
 }
