@@ -5,28 +5,32 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/jroimartin/gocui"
-	"github.com/layeh/barnard"
-	_ "github.com/layeh/barnard/uiterm"
 	"github.com/layeh/gumble/gumble"
 	_ "github.com/layeh/gumble/opus"
 )
 
 func main() {
+	// Configuration
+	var c Config
+	c.LoadConfig()
 	// Command line flags
-	server := flag.String("server", "localhost:64738", "the server to connect to")
-	username := flag.String("username", "", "the username of the client")
-	password := flag.String("password", "", "the password of the server")
+	time.Sleep(time.Second * 2)
+	server := flag.String("server", c.DefaultServer, "the server to connect to")
+	username := flag.String("username", c.DefaultUsername, "the username of the client")
+	password := flag.String("password", c.DefaultPassword, "the password of the server")
 	insecure := flag.Bool("insecure", false, "skip server certificate verification")
 	certificate := flag.String("certificate", "", "PEM encoded certificate and private key")
 
 	flag.Parse()
 
 	// Initialize
-	b := barnard.Barnard{
-		Config:  gumble.NewConfig(),
-		Address: *server,
+	b := Barnard{
+		Config:        gumble.NewConfig(),
+		Address:       *server,
+		BarnardConfig: c,
 	}
 
 	b.Config.Username = *username
@@ -52,12 +56,9 @@ func main() {
 		os.Exit(1)
 	}
 	defer b.UI.Close()
-
-	b.UI.SetManager(&b.UILeftPane, &b.UIRightPane, &b.UIBottomPane, &b.UITextboxEntry)
-	b.SetupHotkeys()
+	defer b.Listener.Close()
 	if err := b.UI.MainLoop(); err != nil && err != gocui.ErrQuit {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
-
 }

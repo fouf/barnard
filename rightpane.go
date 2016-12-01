@@ -1,6 +1,8 @@
-package uiterm
+package main
 
 import (
+	"fmt"
+
 	"github.com/jroimartin/gocui"
 )
 
@@ -8,6 +10,7 @@ type RightPane struct {
 	Name       string
 	Title      string
 	UILeftPane *LeftPane
+	contents   string
 }
 
 func (w *RightPane) Layout(g *gocui.Gui) error {
@@ -18,6 +21,8 @@ func (w *RightPane) Layout(g *gocui.Gui) error {
 		return err
 	}
 	v.Title = w.Title
-
+	v.Wrap = true
+	v.Clear()
+	fmt.Fprintf(v, w.contents)
 	return nil
 }

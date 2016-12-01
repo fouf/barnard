@@ -1,9 +1,6 @@
-package uiterm
+package main
 
 import (
-	_ "strings"
-	_ "unicode/utf8"
-
 	"github.com/jroimartin/gocui"
 )
 
@@ -11,7 +8,12 @@ type TextboxEntry struct {
 	Name         string
 	UIBottomPane *BottomPane
 	Title        string
-	text         string
+	SendMessage  func(text string)
+}
+
+func (w *TextboxEntry) UpdateInputStatus(g *gocui.Gui, status string) {
+	w.Title = status
+	g.Execute(w.Layout)
 }
 
 func (w *TextboxEntry) Layout(g *gocui.Gui) error {
@@ -22,6 +24,12 @@ func (w *TextboxEntry) Layout(g *gocui.Gui) error {
 	}
 	v.Editable = true
 	v.Title = w.Title
+
+	return nil
+}
+
+func (w *TextboxEntry) HandleSendMessageKey(g *gocui.Gui, v *gocui.View) error {
+	w.SendMessage(v.Buffer())
 	v.Clear()
 	return nil
 }
