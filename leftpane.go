@@ -116,17 +116,17 @@ func (w *LeftPane) setRightPaneDesc(g *gocui.Gui, v *gocui.View, y int) {
 	if treeItem.isChannel {
 		if treeItem.c.Description == "" {
 			treeItem.c.RequestDescription()
-			//w.UIRightPane.contents = "Requesting channel description...\n"
 		} else {
 			(*w.UIRightPane).contents = treeItem.c.Description
 		}
 	} else if w.treeStructure[cY].isUser {
 		if treeItem.u.Comment == "" {
 			treeItem.u.RequestComment()
-			//w.UIRightPane.contents = "Requesting user comment...\n"
 		} else {
 			(*w.UIRightPane).contents = treeItem.u.Comment
 		}
+	} else {
+		(*w.UIRightPane).contents = ""
 	}
 	g.Execute((*w.UIRightPane).Layout)
 }
@@ -138,6 +138,7 @@ func (w *LeftPane) HandleUp(g *gocui.Gui, v *gocui.View) error {
 			return err
 		}
 	}
+	g.Execute(w.Layout)
 	w.setRightPaneDesc(g, v, cy)
 	return nil
 }
@@ -149,6 +150,7 @@ func (w *LeftPane) HandleDown(g *gocui.Gui, v *gocui.View) error {
 			return err
 		}
 	}
+	g.Execute(w.Layout)
 	w.setRightPaneDesc(g, v, cy)
 	return nil
 }
