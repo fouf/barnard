@@ -53,6 +53,9 @@ func (w *LeftPane) Layout(g *gocui.Gui) error {
 	w.DrawChannelTree(v, (*w.channels)[0], 0, 0, space)
 	return nil
 }
+
+// DrawChannelTree is a recursive function used to draw the channel hierarchy,
+// Will properly format users and channels.
 func (w *LeftPane) DrawChannelTree(v *gocui.View, c *gumble.Channel, offset int, height int, space string) {
 	v.SelFgColor = gocui.ColorBlack | gocui.AttrBold
 	v.SelBgColor = gocui.ColorWhite
@@ -106,6 +109,9 @@ func (w *LeftPane) DrawChannelTree(v *gocui.View, c *gumble.Channel, offset int,
 		w.DrawChannelTree(v, c.Children[uint32(val)], offset, height, space)
 	}
 }
+
+// setRightPaneDesc sets the right panes description based on our current
+// selection in the channel hierarchy on the left.
 func (w *LeftPane) setRightPaneDesc(g *gocui.Gui, v *gocui.View, y int) {
 	_, cY := v.Cursor()
 	if cY < 0 || cY >= len(w.treeStructure) {
@@ -130,6 +136,8 @@ func (w *LeftPane) setRightPaneDesc(g *gocui.Gui, v *gocui.View, y int) {
 	}
 	g.Execute((*w.UIRightPane).Layout)
 }
+
+// HandleUp handles the Up key for the channel hierarchy
 func (w *LeftPane) HandleUp(g *gocui.Gui, v *gocui.View) error {
 	ox, oy := v.Origin()
 	cx, cy := v.Cursor()
@@ -142,6 +150,8 @@ func (w *LeftPane) HandleUp(g *gocui.Gui, v *gocui.View) error {
 	w.setRightPaneDesc(g, v, cy)
 	return nil
 }
+
+// HandleDown handles the down key for the channel hierarchy
 func (w *LeftPane) HandleDown(g *gocui.Gui, v *gocui.View) error {
 	cx, cy := v.Cursor()
 	if err := v.SetCursor(cx, cy+1); err != nil {
@@ -154,6 +164,8 @@ func (w *LeftPane) HandleDown(g *gocui.Gui, v *gocui.View) error {
 	w.setRightPaneDesc(g, v, cy)
 	return nil
 }
+
+// HandleAction handles the action key when on a channel hierarchy treee item
 func (w *LeftPane) HandleAction(g *gocui.Gui, v *gocui.View) error {
 	_, cY := v.Cursor()
 	if cY < 0 || cY >= len(w.treeStructure) {

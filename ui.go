@@ -18,6 +18,7 @@ func esc(str string) string {
 	return sanitize.HTML(str)
 }
 
+// InitializeUI sets up the initial UI for gocui
 func (b *Barnard) InitializeUI() error {
 	var err error
 	b.UI, err = gocui.NewGui()
@@ -100,6 +101,7 @@ func (b *Barnard) socketServer(c net.Conn) {
 	}
 }
 
+// SetupHotkeys loads the keys from the configuration and sets the handlers.
 func (b *Barnard) SetupHotkeys() {
 	var quitKey gocui.Key
 	var actionKey gocui.Key
@@ -181,6 +183,7 @@ func (b *Barnard) SetupHotkeys() {
 	b.socketListener()
 }
 
+// ToggleVoice will toggle the voice transmission, used by the hotkey and the unix socket.
 func (b *Barnard) ToggleVoice() {
 	if b.UILeftPane == nil {
 		return
@@ -194,10 +197,14 @@ func (b *Barnard) ToggleVoice() {
 	}
 	b.UI.Execute(b.UILeftPane.Layout)
 }
+
+// HandleToggleVoice is the callback for the shortcut to toggle voice transmission.
 func (b *Barnard) HandleToggleVoice(g *gocui.Gui, v *gocui.View) error {
 	b.ToggleVoice()
 	return nil
 }
+
+// HandleSendMessage will add the text to the bottom pane to be displayed.
 func (b *Barnard) HandleSendMessage(text string) {
 	if text == "" {
 		return
@@ -214,15 +221,10 @@ func (b *Barnard) handleChangeView(g *gocui.Gui, v *gocui.View) error {
 	if _, err := b.UI.SetCurrentView(b.ViewArray[b.ViewActive]); err != nil {
 		return err
 	}
-	//if _, err := b.UI.SetViewOnTop(b.ViewArray[b.ViewActive]); err != nil {
-	//	return err
-	//}
 	return nil
 }
 
-func (b *Barnard) UpdateInputStatus(status string) {
-
-}
+// AddTextMessage will add the text message from the user to the chat log in the form User Name: message. Will add just the message if user is nil.
 func (b *Barnard) AddTextMessage(sender *gumble.User, message string) {
 	if sender == nil {
 		b.UIBottomPane.AddLine(b.UI, message)
@@ -231,6 +233,7 @@ func (b *Barnard) AddTextMessage(sender *gumble.User, message string) {
 	}
 }
 
+// HandleDeafen is the callback handler for the key to deafen our client so we can stop hearing incoming audio.
 func (b *Barnard) HandleDeafen(g *gocui.Gui, v *gocui.View) error {
 	d := b.Client.Self.SelfDeafened
 	b.Client.Self.SetSelfDeafened(!d)

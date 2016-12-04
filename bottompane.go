@@ -15,6 +15,7 @@ type BottomPane struct {
 	Autoscroll bool
 }
 
+// AddLine adds a line to our lines slice
 func (w *BottomPane) AddLine(g *gocui.Gui, line string) {
 	w.lines = append(w.lines, line)
 	g.Execute(w.Layout)
@@ -37,6 +38,9 @@ func (w *BottomPane) Layout(g *gocui.Gui) error {
 	}
 	return nil
 }
+
+// Scroll takes a delta and scrolls the view buffer in that direction,
+// called by ScrollUp and ScrollDown
 func (w *BottomPane) Scroll(v *gocui.View, delta int) error {
 	_, sY := v.Size()
 	oX, oY := v.Origin()
@@ -50,18 +54,24 @@ func (w *BottomPane) Scroll(v *gocui.View, delta int) error {
 	}
 	return nil
 }
+
+// ScrollUp handles the scroll up key.
 func (w *BottomPane) ScrollUp(g *gocui.Gui, v *gocui.View) error {
 	if err := w.Scroll(v, -1); err != nil {
 		return err
 	}
 	return nil
 }
+
+// ScrollDown handles the scroll down key.
 func (w *BottomPane) ScrollDown(g *gocui.Gui, v *gocui.View) error {
 	if err := w.Scroll(v, 1); err != nil {
 		return err
 	}
 	return nil
 }
+
+// Clear clears the chat log.
 func (w *BottomPane) Clear(g *gocui.Gui, v *gocui.View) error {
 	w.lines = w.lines[:0]
 	w.Autoscroll = true

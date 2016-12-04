@@ -14,7 +14,7 @@ type Barnard struct {
 	Client        *gumble.Client
 	Address       string
 	TLSConfig     tls.Config
-	BarnardConfig Config
+	BarnardConfig Config // The configuration for the config.ini
 	Stream        *gumbleopenal.Stream
 
 	UI             *gocui.Gui

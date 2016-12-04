@@ -33,6 +33,7 @@ func (b *Barnard) start() {
 	}
 }
 
+// OnConnect logs in the chat that we have connected, and the welcome message.
 func (b *Barnard) OnConnect(e *gumble.ConnectEvent) {
 
 	b.Client = e.Client
@@ -44,6 +45,7 @@ func (b *Barnard) OnConnect(e *gumble.ConnectEvent) {
 	}
 }
 
+// OnDisconnect disconnects gumble and prints the reason in the chat log.
 func (b *Barnard) OnDisconnect(e *gumble.DisconnectEvent) {
 	var reason string
 	switch e.Type {
@@ -57,10 +59,12 @@ func (b *Barnard) OnDisconnect(e *gumble.DisconnectEvent) {
 	}
 }
 
+// OnTextMessage  calls AddTextMessage to display the chat message.
 func (b *Barnard) OnTextMessage(e *gumble.TextMessageEvent) {
 	b.AddTextMessage(e.Sender, e.Message)
 }
 
+// OnUserChange will handle when a user changes channels, including ourselves.
 func (b *Barnard) OnUserChange(e *gumble.UserChangeEvent) {
 	if e.Type.Has(gumble.UserChangeChannel) && e.User == b.Client.Self {
 		b.UITextboxEntry.UpdateInputStatus(b.UI, fmt.Sprintf("To: %s", e.User.Channel.Name))
@@ -72,6 +76,8 @@ func (b *Barnard) OnChannelChange(e *gumble.ChannelChangeEvent) {
 	b.UI.Execute(b.UILeftPane.Layout)
 }
 
+// OnPermissionDenied handles a permission event, printing the
+// error to the chat log.
 func (b *Barnard) OnPermissionDenied(e *gumble.PermissionDeniedEvent) {
 	var info string
 	switch e.Type {

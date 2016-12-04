@@ -24,6 +24,7 @@ type Config struct {
 	DefaultPassword string
 }
 
+// LoadConfig will load the config located at .config/barnard/config.ini in the home directory of the user.
 func (c *Config) LoadConfig() {
 	usr, err := user.Current()
 	if err != nil {
@@ -33,6 +34,8 @@ func (c *Config) LoadConfig() {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 	}
 }
+
+// This function will return a uint16 key value from a string. Used to parse configuration.
 func (c *Config) getKeyFromString(k string) (gocui.Key, error) {
 	var ret gocui.Key
 	switch k {
@@ -180,7 +183,4 @@ func (c *Config) getKeyFromString(k string) (gocui.Key, error) {
 		return 0, errors.New("Unknown key")
 	}
 	return ret, nil
-}
-
-func (c *Config) SetKeys() {
 }
